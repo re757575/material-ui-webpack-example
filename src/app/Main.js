@@ -1,80 +1,76 @@
-/**
- * In this file, we create a React component
- * which incorporates components provided by Material-UI.
- */
 import React, {Component} from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import Dialog from 'material-ui/Dialog';
-import {deepOrange500} from 'material-ui/styles/colors';
-import FlatButton from 'material-ui/FlatButton';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 const styles = {
-  container: {
-    textAlign: 'center',
-    paddingTop: 200,
+  appBar: {
+    position: 'fixed',
+    top: 0,
   },
 };
 
-const muiTheme = getMuiTheme({
-  palette: {
-    accent1Color: deepOrange500,
-  },
-});
+const Logged = (props) => (
+  <IconMenu
+    {...props}
+    iconButtonElement={
+      <IconButton><MoreVertIcon /></IconButton>
+    }
+    targetOrigin={{horizontal: 'right', vertical: 'top'}}
+    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+  >
+    <MenuItem primaryText="Refresh" />
+    <MenuItem primaryText="Help" />
+    <MenuItem primaryText="Sign out" />
+  </IconMenu>
+);
 
+Logged.muiName = 'IconMenu';
+
+/**
+ * This example is taking advantage of the composability of the `AppBar`
+ * to render different components depending on the application state.
+ */
 class Main extends Component {
-  constructor(props, context) {
-    super(props, context);
 
-    this.state = {
-      open: false,
-    };
+  constructor(props) {
+    super(props);
+    this.state = {drawerOpen: false};
   }
 
-  handleRequestClose = () => {
-    this.setState({
-      open: false,
-    });
-  }
+  handleDrawerToggle = () => {
+    this.setState({drawerOpen: !this.state.drawerOpen});
+  };
 
-  handleTouchTap = () => {
-    this.setState({
-      open: true,
-    });
-  }
+  handleDrawerClose = () => {
+    this.setState({drawerOpen: false});
+  };
 
   render() {
-    const standardActions = (
-      <FlatButton
-        label="Ok"
-        primary={true}
-        onTouchTap={this.handleRequestClose}
-      />
-    );
-
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
-        <div style={styles.container}>
-          <Dialog
-            open={this.state.open}
-            title="Super Secret Password"
-            actions={standardActions}
-            onRequestClose={this.handleRequestClose}
-          >
-            1-2-3-4-5
-          </Dialog>
-          <h1>Material-UI</h1>
-          <h2>example project</h2>
-          <RaisedButton
-            label="Super Secret Password"
-            secondary={true}
-            onTouchTap={this.handleTouchTap}
-          />
-        </div>
-      </MuiThemeProvider>
+      <div>
+        <AppBar
+          title="Title"
+          style={styles.appBar}
+          iconElementRight={<Logged />}
+          onLeftIconButtonTouchTap={this.handleDrawerToggle}
+        />
+        <Drawer
+          docked={false}
+          width={250}
+          open={this.state.drawerOpen}
+          onRequestChange={(drawerOpen) => this.setState({drawerOpen})}
+        >
+          <MenuItem onTouchTap={this.handleDrawerClose}>Menu Item</MenuItem>
+          <MenuItem onTouchTap={this.handleDrawerClose}>Menu Item 2</MenuItem>
+        </Drawer>
+      </div>
     );
   }
 }
+
 
 export default Main;
